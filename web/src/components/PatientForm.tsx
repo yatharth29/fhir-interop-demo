@@ -41,7 +41,9 @@ export default function PatientForm({ hospitalId }: PatientFormProps) {
         birthDate: formData.birthDate
       };
 
-      await createPatient(patientData, hospitalId);
+      await createPatient(hospitalId, patientData);
+      // Emit a custom event to notify patient list to refresh
+      window.dispatchEvent(new CustomEvent('patients:refresh'));
       setMessage('Patient created successfully!');
       setFormData({
         firstName: '',

@@ -23,4 +23,9 @@ router.get("/:id", async (req, res) => {
 	res.json(r.data);
 });
 
+router.delete("/:id", async (req, res) => {
+	const r = await fhir.delete(`/Patient/${req.params.id}`);
+	res.status(r.status).json(r.data || { deleted: true });
+});
+
 export default router; 

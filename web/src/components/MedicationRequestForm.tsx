@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createMedicationRequest } from '../lib/api';
 
 interface MedicationRequestFormProps {
   hospitalId: string;
@@ -15,9 +16,27 @@ export default function MedicationRequestForm({ hospitalId }: MedicationRequestF
     notes: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [message, setMessage] = useState('');
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Creating medication request:', formData);
+    setMessage('');
+    try {
+      const mr = {
+        resourceType: 'MedicationRequest',
+        status: 'active',
+        intent: 'order',
+        subject: { reference: formData.patientId },
+        medicationCodeableConcept: { coding: [{ system: 'http://www.nlm.nih.gov/research/umls/rxnorm', code: formData.medicationCode || '197361' }] },
+        dosageInstruction: [{ text: `${formData.dosage} ${formData.frequency.replace('-', ' ')}` }],
+        note: formData.notes ? [{ text: formData.notes }] : undefined,
+        authoredOn: formData.startDate
+      };
+      await createMedicationRequest(hospitalId, mr);
+      setMessage('Medication request created');
+    } catch (err) {
+      setMessage('Error creating medication request');
+      console.error(err);
+    }
   };
 
   return (
@@ -137,6 +156,9 @@ export default function MedicationRequestForm({ hospitalId }: MedicationRequestF
           </div>
         </div>
 
+        {message && (
+          <div className={`p-3 rounded ${message.startsWith('Error') ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'}`}>{message}</div>
+        )}
         <div className="flex justify-end">
           <button
             type="submit"

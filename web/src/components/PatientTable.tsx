@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { listPatients, getPatient, deletePatient } from '../lib/api';
 
 interface Patient {
   id: string;
@@ -24,38 +25,45 @@ export default function PatientTable({ hospitalId }: PatientTableProps) {
 
   useEffect(() => {
     fetchPatients();
+    const handler = () => fetchPatients();
+    window.addEventListener('patients:refresh', handler);
+    return () => window.removeEventListener('patients:refresh', handler);
   }, [hospitalId]);
 
   const fetchPatients = async () => {
     try {
       setLoading(true);
-      // TODO: Implement API call to fetch patients
-      // const response = await fetch(`/api/patients?hospitalId=${hospitalId}`);
-      // const data = await response.json();
-      // setPatients(data.data.entry?.map((entry: any) => entry.resource) || []);
-      
-      // Mock data for now
-      setPatients([
-        {
-          id: '1',
-          name: [{ family: 'Smith', given: ['John'] }],
-          gender: 'male',
-          birthDate: '1980-01-01',
-          identifier: [{ value: 'PAT-001' }]
-        },
-        {
-          id: '2',
-          name: [{ family: 'Johnson', given: ['Jane'] }],
-          gender: 'female',
-          birthDate: '1985-05-15',
-          identifier: [{ value: 'PAT-002' }]
-        }
-      ]);
+      const response = await listPatients(hospitalId);
+      const bundle = response.data;
+      const resources = (bundle.entry || []).map((e: any) => e.resource);
+      setPatients(resources);
     } catch (err) {
       setError('Failed to fetch patients');
       console.error('Error fetching patients:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleView = async (idOrIdentifier: string) => {
+    try {
+      // Optimistically try id; if it fails, the gateway still accepts identifier via search in future enhancements
+      const res = await getPatient(hospitalId, idOrIdentifier);
+      alert(JSON.stringify(res.data, null, 2));
+    } catch (err) {
+      console.error('View failed', err);
+      setError('Failed to view patient');
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Delete this patient?')) return;
+    try {
+      await deletePatient(hospitalId, id);
+      await fetchPatients();
+    } catch (err) {
+      console.error('Delete failed', err);
+      setError('Failed to delete patient');
     }
   };
 
@@ -135,13 +143,13 @@ export default function PatientTable({ hospitalId }: PatientTableProps) {
                     {patient.birthDate || 'N/A'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button className="text-blue-600 hover:text-blue-900 mr-3">
+                    <button className="text-blue-600 hover:text-blue-900 mr-3" onClick={() => handleView(patient.id)}>
                       View
                     </button>
-                    <button className="text-green-600 hover:text-green-900 mr-3">
+                    <button className="text-green-600 hover:text-green-900 mr-3" onClick={() => alert('Edit not implemented in demo')}>
                       Edit
                     </button>
-                    <button className="text-red-600 hover:text-red-900">
+                    <button className="text-red-600 hover:text-red-900" onClick={() => handleDelete(patient.id)}>
                       Delete
                     </button>
                   </td>

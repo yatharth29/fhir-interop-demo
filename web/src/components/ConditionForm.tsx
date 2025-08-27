@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createCondition } from '../lib/api';
 
 interface ConditionFormProps {
   hospitalId: string;
@@ -13,9 +14,25 @@ export default function ConditionForm({ hospitalId }: ConditionFormProps) {
     notes: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [message, setMessage] = useState('');
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Creating condition:', formData);
+    setMessage('');
+    try {
+      const condition = {
+        resourceType: 'Condition',
+        subject: { reference: formData.patientId },
+        code: { coding: [{ system: 'http://hl7.org/fhir/sid/icd-10', code: formData.conditionCode || 'I10' }] },
+        onsetDateTime: formData.onsetDate,
+        severity: formData.severity ? { text: formData.severity } : undefined,
+        note: formData.notes ? [{ text: formData.notes }] : undefined
+      };
+      await createCondition(hospitalId, condition);
+      setMessage('Condition created');
+    } catch (err) {
+      setMessage('Error creating condition');
+      console.error(err);
+    }
   };
 
   return (
@@ -103,6 +120,9 @@ export default function ConditionForm({ hospitalId }: ConditionFormProps) {
           </div>
         </div>
 
+        {message && (
+          <div className={`p-3 rounded ${message.startsWith('Error') ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'}`}>{message}</div>
+        )}
         <div className="flex justify-end">
           <button
             type="submit"

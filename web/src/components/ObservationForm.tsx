@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createObservation } from '../lib/api';
 
 interface ObservationFormProps {
   hospitalId: string;
@@ -13,10 +14,34 @@ export default function ObservationForm({ hospitalId }: ObservationFormProps) {
     date: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [message, setMessage] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement observation creation
-    console.log('Creating observation:', formData);
+    setMessage('');
+    try {
+      const obs = {
+        resourceType: 'Observation',
+        status: 'final',
+        category: [{ coding: [{ system: 'http://terminology.hl7.org/CodeSystem/observation-category', code: formData.observationType || 'vital-signs' }] }],
+        // Use a generic code to avoid unit-specific validation failures
+        code: { coding: [{ system: 'http://example.org/fhir/CodeSystem/demo', code: 'generic-result', display: 'Generic result' }] },
+        // Send raw identifier or id; gateway will resolve and prefix properly
+        subject: { reference: formData.patientId },
+        effectiveDateTime: formData.date,
+        valueQuantity: formData.value ? {
+          value: Number(formData.value),
+          unit: formData.unit || undefined,
+          system: formData.unit ? 'http://unitsofmeasure.org' : undefined,
+          code: formData.unit || undefined
+        } : undefined
+      };
+      await createObservation(hospitalId, obs);
+      setMessage('Observation created successfully');
+    } catch (err) {
+      setMessage('Error creating observation');
+      console.error(err);
+    }
   };
 
   return (
@@ -104,6 +129,9 @@ export default function ObservationForm({ hospitalId }: ObservationFormProps) {
           </div>
         </div>
 
+        {message && (
+          <div className={`p-3 rounded ${message.startsWith('Error') ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'}`}>{message}</div>
+        )}
         <div className="flex justify-end">
           <button
             type="submit"

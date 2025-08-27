@@ -1,0 +1,44 @@
+
+> fhir-web@1.0.0 dev
+> next dev
+
+  ▲ Next.js 14.2.32
+  - Local:        http://localhost:3000
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 2.8s
+ ○ Compiling / ...
+ ✓ Compiled / in 2.3s (328 modules)
+ GET / 200 in 2720ms
+ GET / 200 in 21ms
+ ✓ Compiled in 414ms (328 modules)
+ GET / 200 in 72ms
+ GET / 200 in 17ms
+ ✓ Compiled in 184ms (328 modules)
+ ✓ Compiled in 291ms (328 modules)
+ ✓ Compiled in 230ms (328 modules)
+ ✓ Compiled in 155ms (328 modules)
+ ✓ Compiled in 159ms (328 modules)
+ ✓ Compiled in 202ms (328 modules)
+ ✓ Compiled in 113ms (328 modules)
+ ✓ Compiled in 457ms (328 modules)
+ GET / 200 in 53ms
+ ✓ Compiled in 152ms (328 modules)
+ ✓ Compiled in 300ms (328 modules)
+ ✓ Compiled in 153ms (328 modules)
+ ✓ Compiled in 152ms (328 modules)
+ ✓ Compiled in 259ms (328 modules)
+ GET / 200 in 29ms
+ ✓ Compiled in 188ms (328 modules)
+ ✓ Compiled in 137ms (328 modules)
+ ✓ Compiled in 143ms (328 modules)
+ ✓ Compiled in 138ms (328 modules)
+ GET / 200 in 41ms
+ ✓ Compiled in 135ms (328 modules)
+ ✓ Compiled in 110ms (328 modules)
+ GET / 200 in 56ms
+ ✓ Compiled in 354ms (328 modules)
+ ✓ Compiled in 154ms (328 modules)
+ ✓ Compiled in 246ms (328 modules)
+ GET / 200 in 70ms

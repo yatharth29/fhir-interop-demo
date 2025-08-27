@@ -12,14 +12,21 @@ export const errorHandler = (
   _next: NextFunction
 ): void => {
   void _next; // satisfy noUnusedParameters
-  const statusCode = error.statusCode || 500;
-  const message = error.message || 'Internal Server Error';
+  // Try to unwrap Axios-like errors
+  const anyErr: any = error as any;
+  const upstreamStatus = anyErr?.response?.status as number | undefined;
+  const upstreamData = anyErr?.response?.data;
+  const statusCode = upstreamStatus || error.statusCode || 500;
+  const message = (anyErr?.response?.statusText as string) || error.message || 'Internal Server Error';
 
   // Log the error
   console.error(`❌ Error ${statusCode}: ${message}`);
   console.error(`📍 ${req.method} ${req.path}`);
   console.error(`🏥 Hospital: ${req.headers['x-hospital-id'] || 'Unknown'}`);
   console.error(`📝 Stack: ${error.stack}`);
+  if (upstreamData) {
+    console.error(`↩️ Upstream response:`, JSON.stringify(upstreamData));
+  }
 
   // Don't leak error details in production
   const isDevelopment = process.env['NODE_ENV'] === 'development';
@@ -31,6 +38,7 @@ export const errorHandler = (
       timestamp: new Date().toISOString(),
       path: req.path,
       method: req.method,
+      upstream: isDevelopment ? upstreamData : undefined,
       ...(isDevelopment && { stack: error.stack })
     }
   });

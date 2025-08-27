@@ -23,6 +23,16 @@ app.use(cors());
 
 // Logging
 app.use(morgan('combined'));
+// Disable caching for API responses to ensure fresh data
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api/')) {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.setHeader('Surrogate-Control', 'no-store');
+  }
+  next();
+});
 
 // Body parsing
 app.use(express.json({ limit: '10mb' }));
