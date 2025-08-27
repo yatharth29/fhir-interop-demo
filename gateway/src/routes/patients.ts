@@ -1,0 +1,26 @@
+import { Router } from "express";
+import { fhir } from "../fhirClient";
+import { addTenantTag, filterByTenantQuery } from "../utils/fhir";
+
+const router = Router();
+
+router.post("/", async (req, res) => {
+	const orgId = (req as any).orgId;
+	const patient = addTenantTag(req.body, orgId);
+	const r = await fhir.post("/Patient", patient);
+	res.status(r.status).json(r.data);
+});
+
+router.get("/", async (req, res) => {
+	const orgId = (req as any).orgId;
+	const q = filterByTenantQuery(orgId);
+	const r = await fhir.get("/Patient", { params: q });
+	res.json(r.data);
+});
+
+router.get("/:id", async (req, res) => {
+	const r = await fhir.get(`/Patient/${req.params.id}`);
+	res.json(r.data);
+});
+
+export default router; 

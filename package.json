@@ -1,0 +1,55 @@
+{
+  "name": "fhir-interop-demo",
+  "version": "1.0.0",
+  "description": "FHIR Interoperability Demo - Multi-hospital data sharing platform",
+  "private": true,
+  "workspaces": [
+    "gateway",
+    "web",
+    "tools/seed"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:gateway\" \"npm run dev:web\"",
+    "dev:gateway": "cd gateway && npm run dev",
+    "dev:web": "cd web && npm run dev",
+    "build": "npm run build:gateway && npm run build:web",
+    "build:gateway": "cd gateway && npm run build",
+    "build:web": "cd web && npm run build",
+    "start": "concurrently \"npm run start:gateway\" \"npm run start:web\"",
+    "start:gateway": "cd gateway && npm start",
+    "start:web": "cd web && npm start",
+    "test": "npm run test:gateway",
+    "test:gateway": "cd gateway && npm test",
+    "seed": "cd tools/seed && npm run seed",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "docker:restart": "docker-compose restart",
+    "clean": "npm run clean:gateway && npm run clean:web",
+    "clean:gateway": "cd gateway && rm -rf dist node_modules",
+    "clean:web": "cd web && rm -rf .next node_modules",
+    "install:all": "npm install && npm run install:gateway && npm run install:web && npm run install:seed",
+    "install:gateway": "cd gateway && npm install",
+    "install:web": "cd web && npm install",
+    "install:seed": "cd tools/seed && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": [
+    "fhir",
+    "healthcare",
+    "interoperability",
+    "typescript",
+    "nextjs",
+    "express",
+    "docker",
+    "postgresql"
+  ],
+  "author": "FHIR Interop Demo",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  }
+} 

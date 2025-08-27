@@ -1,0 +1,51 @@
+hapi:
+  fhir:
+    fhir_version: R4
+    allow_external_references: true
+    allow_placeholder_references: true
+    auto_create_placeholder_reference_targets: true
+    default_pretty_print: true
+    default_encoding: UTF-8
+    default_page_size: 20
+    maximum_page_size: 1000
+    allow_multiple_delete: true
+    allow_override_default_search_params: true
+    auto_create_placeholder_reference_targets: true
+    auto_register_placeholder_reference_targets: true
+    enable_index_missing_fields: true
+    enable_repository_validating_interceptor: true
+    enforce_referential_integrity_on_write: true
+    enforce_referential_integrity_on_delete: true
+    fhir_version: R4
+    invalidate_mark_for_deletion: true
+    mark_resources_for_reindexing_as_accessed: true
+    search_coord_allow_synchronous_search: true
+    subscription:
+      email:
+        enabled: false
+      rest_hook:
+        enabled: false
+      websocket:
+        enabled: false
+      polling:
+        enabled: false
+
+  datasource:
+    driver: org.postgresql.Driver
+    url: jdbc:postgresql://postgres:5432/hapi
+    username: hapi
+    password: hapi
+    max_pool_size: 10
+    min_pool_size: 2
+    initial_pool_size: 2
+    max_connection_age: 300
+    max_idle_time: 300
+    leak_detection_threshold: 60
+
+  logging:
+    level:
+      ca.uhn.fhir: INFO
+      ca.uhn.fhir.jpa: INFO
+      ca.uhn.fhir.rest: INFO
+      ca.uhn.fhir.validation: INFO
+      ca.uhn.fhir.interceptor: INFO 

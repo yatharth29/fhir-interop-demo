@@ -1,0 +1,127 @@
+{
+  "info": {
+    "name": "FHIR Interop Demo",
+    "description": "Postman collection for testing FHIR Interoperability Demo API endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3001",
+      "type": "string"
+    },
+    {
+      "key": "hapiUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "hospitalId",
+      "value": "HOSP-A",
+      "type": "string"
+    },
+    {
+      "key": "hospitalName",
+      "value": "General Hospital A",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "FHIR Metadata",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/fhir/metadata",
+          "host": ["{{baseUrl}}"],
+          "path": ["fhir", "metadata"]
+        }
+      }
+    },
+    {
+      "name": "HAPI FHIR Metadata",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{hapiUrl}}/fhir/metadata",
+          "host": ["{{hapiUrl}}"],
+          "path": ["fhir", "metadata"]
+        }
+      }
+    },
+    {
+      "name": "Patients",
+      "item": [
+        {
+          "name": "Get All Patients",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-hospital-id",
+                "value": "{{hospitalId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-hospital-name",
+                "value": "{{hospitalName}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/patients",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "patients"]
+            }
+          }
+        },
+        {
+          "name": "Create Patient",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-hospital-id",
+                "value": "{{hospitalId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-hospital-name",
+                "value": "{{hospitalName}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resourceType\": \"Patient\",\n  \"identifier\": [\n    {\n      \"system\": \"http://hospital-system/patient\",\n      \"value\": \"PAT-004\"\n    }\n  ],\n  \"name\": [\n    {\n      \"use\": \"official\",\n      \"family\": \"Davis\",\n      \"given\": [\"Sarah\", \"Marie\"]\n    }\n  ],\n  \"gender\": \"female\",\n  \"birthDate\": \"1990-08-15\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/patients",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "patients"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+} 

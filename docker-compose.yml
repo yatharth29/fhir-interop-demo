@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: hapi
+      POSTGRES_USER: hapi
+      POSTGRES_PASSWORD: hapi
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infra/init-sql:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hapi"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  hapi:
+    image: hapiproject/hapi:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - hapi.fhir.fhir_version=R4
+      - hapi.datasource.driver=org.postgresql.Driver
+      - hapi.datasource.url=jdbc:postgresql://postgres:5432/hapi
+      - hapi.datasource.username=hapi
+      - hapi.datasource.password=hapi
+      - hapi.datasource.max_pool_size=10
+      - hapi.fhir.allow_external_references=true
+      - hapi.fhir.allow_placeholder_references=true
+      - hapi.fhir.auto_create_placeholder_reference_targets=true
+    volumes:
+      - ./infra/hapi/application.yaml:/hapi/application.yaml
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/fhir/metadata"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  gateway:
+    build: ./gateway
+    ports:
+      - "3001:3001"
+    environment:
+      - HAPI_URL=http://hapi:8080
+      - PORT=3001
+    depends_on:
+      hapi:
+        condition: service_healthy
+    volumes:
+      - ./gateway:/app
+      - /app/node_modules
+
+  web:
+    build: ./web
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_GATEWAY_URL=http://localhost:3001
+    depends_on:
+      - gateway
+    volumes:
+      - ./web:/app
+      - /app/node_modules
+
+volumes:
+  postgres_data: 

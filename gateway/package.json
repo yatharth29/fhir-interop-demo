@@ -1,0 +1,40 @@
+{
+  "name": "fhir-gateway",
+  "version": "1.0.0",
+  "description": "FHIR Gateway for hospital interoperability",
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:vitest": "vitest run"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0",
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1",
+    "express-rate-limit": "^7.1.5"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/cors": "^2.8.17",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^20.8.0",
+    "@types/jest": "^29.5.8",
+    "typescript": "^5.2.2",
+    "ts-node-dev": "^2.0.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "vitest": "^1.6.0",
+    "supertest": "^7.0.0",
+    "@types/supertest": "^2.0.16"
+  },
+  "keywords": ["fhir", "healthcare", "interoperability", "gateway"],
+  "author": "FHIR Interop Demo",
+  "license": "MIT"
+} 

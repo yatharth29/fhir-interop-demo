@@ -1,0 +1,22 @@
+{
+  "name": "fhir-seed",
+  "version": "1.0.0",
+  "description": "Seed script for FHIR Interop Demo",
+  "main": "seed.ts",
+  "scripts": {
+    "seed": "ts-node seed.ts",
+    "build": "tsc",
+    "start": "node dist/seed.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.0",
+    "typescript": "^5.2.2",
+    "ts-node": "^10.9.1"
+  },
+  "keywords": ["fhir", "seed", "healthcare", "interoperability"],
+  "author": "FHIR Interop Demo",
+  "license": "MIT"
+} 
